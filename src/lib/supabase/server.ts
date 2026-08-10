@@ -11,7 +11,7 @@ import { serverEnv } from '@/lib/env';
  */
 export function createServiceClient() {
   const env = serverEnv();
-  return createClient(env.supabaseUrl, env.serviceRoleKey, {
+  return createClient(env.supabaseUrl, env.secretKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

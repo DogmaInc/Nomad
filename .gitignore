@@ -32,6 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# seed scraper response cache (CLAUDE.md §7.2) — re-runs replay from here, never commit it
+scripts/seed/.cache/
 
 # vercel
 .vercel

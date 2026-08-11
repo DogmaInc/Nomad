@@ -5,35 +5,37 @@ import { CriticalSignsBanner } from '@/components/CriticalSignsBanner';
 /**
  * DMV prototype home (CLAUDE.md §4 M1 / §10).
  *
- * Server-renders the facilities so the map has data on first paint — invariant #2 says the
- * map is useful to the very first user with zero clinics enrolled, and a spinner is not
- * useful.
+ * Server-renders the facilities so the map and list have data on first paint — invariant #2
+ * says the map is useful to the very first user with zero clinics enrolled, and a spinner
+ * is not useful.
  *
- * PRE-DESIGN: §12's reference pass is still owed. This proves the pipeline end to end.
+ * Only emergency-layer facilities are fetched: `getFacilities` defaults to er /
+ * er_specialty / urgent_care and to status='active'. Appointment-only specialty practices
+ * and unconfirmed classifications stay in the registry and off the map.
  */
 
 // ssr:false is only permitted inside a Client Component in Next 16 (see AGENTS.md), so the
-// map is imported normally and guards `window` inside its own effect instead.
-const FacilityMap = dynamic(() => import('@/components/map/FacilityMap'));
+// workspace is imported normally and guards `window` inside its own effect instead.
+const MapWorkspace = dynamic(() =>
+  import('@/components/map/MapWorkspace').then((m) => m.MapWorkspace),
+);
 
-// Estimates move with the clock, so the page cannot be cached indefinitely.
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const facilities = await getFacilities({ state: undefined, bbox: [-84, 35, -74, 40.5] });
-  const rankable = facilities.filter((f) => f.facilityType !== 'specialty');
+  const facilities = await getFacilities({ bbox: [-84, 35, -74, 40.5] });
 
   return (
     <div className="flex h-dvh flex-col bg-slate-950 text-slate-100">
       <header className="border-b border-slate-800 px-4 py-3">
-        <div className="mx-auto flex max-w-5xl items-baseline justify-between gap-4">
-          <div>
+        <div className="flex items-baseline justify-between gap-4">
+          <div className="min-w-0">
             <h1 className="text-base font-semibold tracking-tight">
               Nomad <span className="font-normal text-slate-500">· DMV prototype</span>
             </h1>
-            <p className="text-xs text-slate-500">
-              {rankable.length} emergency and urgent-care facilities · estimates are typical
-              for stable pets — always call ahead while driving
+            <p className="truncate text-xs text-slate-500">
+              {facilities.length} emergency and urgent-care facilities · estimates are
+              typical for stable pets — always call ahead while driving
             </p>
           </div>
         </div>
@@ -41,8 +43,8 @@ export default async function HomePage() {
 
       <CriticalSignsBanner />
 
-      <div className="relative flex-1">
-        <FacilityMap initial={facilities} />
+      <div className="min-h-0 flex-1">
+        <MapWorkspace facilities={facilities} />
       </div>
     </div>
   );

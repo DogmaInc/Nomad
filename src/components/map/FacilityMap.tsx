@@ -5,41 +5,49 @@ import type { Map as MapLibreMap, MapGeoJSONFeature } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { publicEnv } from '@/lib/env';
 import type { FacilityPin } from '@/lib/facilities/query';
-import { FacilitySheet } from './FacilitySheet';
 
 /**
  * The facility map (CLAUDE.md §10.1).
  *
- * ┌ PRE-DESIGN ────────────────────────────────────────────────────────────────────┐
- * │ §12 requires pulling real references and committing to a palette and type       │
- * │ direction in writing BEFORE the real UI is built. That has not happened, so     │
- * │ this is deliberately restrained: it proves the data and the model end to end    │
- * │ and is not the visual direction. The design pass is still owed.                 │
- * └─────────────────────────────────────────────────────────────────────────────────┘
+ * Direction — "the honest night map" (§12). Dark ground because the primary user is in a
+ * parking lot at 2 a.m.; the estimate band is the loudest element; severity runs teal →
+ * amber → orange and stops short of red.
  *
- * Two rules from §10 ARE honoured here, because they are correctness, not taste:
+ * Two rules here are correctness rather than taste:
  *  - The estimate is encoded by colour AND a text label. Never colour alone (§10.1) —
- *    roughly 1 in 12 men cannot reliably separate the red/green ends of a ramp.
- *  - Dark basemap: the primary user is in a parking lot at 2 a.m. (§10).
+ *    roughly 1 in 12 men cannot reliably separate the ends of a red/green ramp.
+ *  - Red is reserved exclusively for the critical-signs banner (§10.6). A map that shouts
+ *    at every busy hospital teaches people to ignore the one warning that matters.
  */
 
 const SOURCE_ID = 'facilities';
 
-/** Severity ramp keyed off p50 minutes. Mirrors the admin legend. */
+/** Severity ramp keyed off p50 minutes. Mirrors the list and the admin legend. */
 function severityColor(p50: number | null, type: string): string {
   if (type === 'specialty' || p50 === null) return '#64748b'; // slate — not a walk-in ER
   if (p50 < 45) return '#34d399';
   if (p50 < 90) return '#5eead4';
-  if (p50 < 150) return '#facc15';
+  if (p50 < 150) return '#fcd34d';
   if (p50 < 240) return '#fb923c';
-  return '#f87171';
+  return '#f97316'; // deepest orange — deliberately NOT red (§10.6)
 }
 
-export default function FacilityMap({ initial }: { initial: FacilityPin[] }) {
+export default function FacilityMap({
+  initial,
+  onSelect,
+}: {
+  initial: FacilityPin[];
+  /** Selection is owned by MapWorkspace so the list and the map agree. */
+  onSelect?: (facility: FacilityPin) => void;
+}) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const [facilities] = useState<FacilityPin[]>(initial);
-  const [selected, setSelected] = useState<FacilityPin | null>(null);
+
+  // Kept in a ref so the mount-only effect below always calls the current handler
+  // without needing to re-create the map.
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
 
   const toGeoJson = useCallback(
     (rows: FacilityPin[]) => ({
@@ -146,7 +154,7 @@ export default function FacilityMap({ initial }: { initial: FacilityPin[] }) {
         const openFeature = (feature: MapGeoJSONFeature) => {
           const id = feature.properties?.id as string | undefined;
           const match = facilities.find((f) => f.id === id);
-          if (match) setSelected(match);
+          if (match) onSelectRef.current?.(match);
         };
 
         for (const layer of ['facility-dot', 'facility-halo', 'facility-label']) {
@@ -182,15 +190,10 @@ export default function FacilityMap({ initial }: { initial: FacilityPin[] }) {
   }, []);
 
   return (
-    <>
-      <div
-        ref={containerRef}
-        className="h-full w-full"
-        aria-label="Map of veterinary emergency facilities"
-      />
-      {selected ? (
-        <FacilitySheet facility={selected} onClose={() => setSelected(null)} />
-      ) : null}
-    </>
+    <div
+      ref={containerRef}
+      className="h-full w-full"
+      aria-label="Map of veterinary emergency facilities"
+    />
   );
 }

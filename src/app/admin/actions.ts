@@ -46,6 +46,43 @@ export interface SaveResult {
 }
 
 /**
+ * Resolve a review-queue facility (§7 classification queue).
+ *
+ * `approve` sets the type explicitly and makes the facility active — that is what puts it
+ * on the map. `reject` marks it `not_emergency`: the row and its provenance stay (§7 never
+ * hard-deletes), but it leaves both the map and the queue. Every rejected row is also a
+ * record of a case the importer classified wrongly, which is how the classifier improves.
+ */
+export async function resolveFacility(
+  facilityId: string,
+  decision: 'approve' | 'reject',
+  facilityType: string,
+): Promise<SaveResult> {
+  await requireAdmin();
+
+  const allowed = ['er', 'er_specialty', 'urgent_care'];
+  if (decision === 'approve' && !allowed.includes(facilityType)) {
+    return { ok: false, message: `"${facilityType}" is not an emergency layer.` };
+  }
+
+  const db = createServiceClient();
+  const patch =
+    decision === 'approve'
+      ? { status: 'active', facility_type: facilityType }
+      : { status: 'not_emergency' };
+
+  const { error } = await db.from('facilities').update(patch).eq('id', facilityId);
+  if (error) return { ok: false, message: error.message };
+
+  revalidatePath('/admin/review');
+  revalidatePath('/');
+  return {
+    ok: true,
+    message: decision === 'approve' ? `Approved as ${facilityType}.` : 'Kept off the map.',
+  };
+}
+
+/**
  * Save the §6.2 parameters.
  *
  * This is the form that makes the M1 gate passable: Rod re-tunes numbers here and the

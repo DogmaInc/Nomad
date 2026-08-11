@@ -23,6 +23,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <Link href="/admin/model" className="hover:text-slate-100">
               Model
             </Link>
+            <Link href="/admin/review" className="hover:text-slate-100">
+              Review
+            </Link>
           </nav>
         </div>
       </header>

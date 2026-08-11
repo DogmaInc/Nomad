@@ -16,7 +16,8 @@
     "seed:holidays": "tsx scripts/seed/holidays.ts",
     "seed:density": "tsx scripts/seed/density.ts",
     "model:preview": "tsx scripts/model-preview.ts",
-    "seed:osm": "tsx scripts/seed/osm-dmv.ts"
+    "seed:osm": "tsx scripts/seed/osm-dmv.ts",
+    "postinstall": "node scripts/copy-maplibre-worker.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

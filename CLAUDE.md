@@ -41,6 +41,7 @@ These override any convenient implementation choice. If a task conflicts with on
 - **Supabase** — Postgres, Auth (clinic accounts only in Phase 1), Row Level Security.
 - **PostGIS** + `pg_trgm` — geo queries, dedupe.
 - **MapLibre GL JS** with a free vector-tile source (OpenFreeMap or a MapTiler free key). Do **not** use the Google Maps JS SDK (cost + ToS coupling).
+  - **Gotcha, cost hours on 2026-08-10 — do not re-litigate.** MapLibre v6 is ESM-only and parses tiles in a Web Worker loaded from a sibling `maplibre-gl-worker.mjs`, resolved via `import.meta.url`. Inside a Turbopack chunk that resolves to a path that 404s to Next's HTML error page, so the worker never starts. **The failure is silent and misleading:** the map constructs, controls and attribution render, no `error` event fires — but `map.on('load')` never runs, so there are no tiles, no layers, and a blank basemap. Fixed by `scripts/copy-maplibre-worker.mjs` (postinstall → `public/maplibre/`) plus `setWorkerUrl()` before `new Map()`. If the map ever goes blank again, check for worker targets first; zero vector-tile requests with no console error is the signature.
 - **Drive time:** pluggable `DriveTimeProvider` (§8). Ships with a zero-cost heuristic provider; real routing (OSRM or Mapbox Matrix) drops in behind an env var.
 - **Stripe:** stub only — schema stub + `lib/billing/` interface with TODOs. No Stripe SDK calls, no billing logic.
 - Hosting assumption: Vercel + Supabase cloud. Keep everything runnable locally (`supabase start`).

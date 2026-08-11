@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Overpass response cache (§7.2 politeness) — do not commit
 scripts/seed/.cache/
+
+# MapLibre worker copied by postinstall (scripts/copy-maplibre-worker.mjs)
+public/maplibre/

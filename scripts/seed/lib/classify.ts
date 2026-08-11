@@ -32,6 +32,11 @@ export interface ClassificationInput {
   text?: string | null;
   /** True only when the source states round-the-clock operation explicitly. */
   is247?: boolean | null;
+  /**
+   * A structured, machine-set emergency marker from the source — OSM's `emergency=yes`,
+   * a board licence category. NOT inferred from prose: this is the source asserting it.
+   */
+  structuredEmergency?: boolean | null;
 }
 
 export interface Classification {
@@ -46,7 +51,12 @@ export interface Classification {
 const RE = {
   emergency: /\bemergenc(y|ies)\b|\bER\b|\be-?vet\b|\bcritical care\b/i,
   urgent: /\burgent care\b|\bwalk[- ]?in (clinic|care)\b/i,
-  specialty: /\bspecialt(y|ies)\b|\breferral\b|\binternal medicine\b|\boncology\b|\bcardiolog|\bneurolog|\bsurger|\bdentistry\b|\bophthalmolog|\bdermatolog|\borthopedic/i,
+  // "Specialists" is at least as common as "Specialty" in hospital names — matching only
+  // the latter typed VCA SouthPaws Veterinary *Specialists* & Emergency Center as plain er.
+  // Note the two stems genuinely differ: specialTy vs specialIst. One pattern cannot cover
+  // both by extending the suffix group, which is how the first attempt at this failed.
+  specialty: /\bspecialt(y|ies)\b|\bspecialists?\b/i,
+  specialtyService: /\breferral\b|\binternal medicine\b|\boncology\b|\bcardiolog|\bneurolog|\bsurger|\bdentistry\b|\bophthalmolog|\bdermatolog|\borthopedic/i,
   /** Strong 24/7 phrasing only — "open late" and "extended hours" do not count. */
   open247: /\b24[\s/-]?7\b|\b24[\s-]?hour/i,
   gpOnly: /\bgeneral practice\b|\bwellness\b|\bvaccine clinic\b|\bgrooming\b|\bboarding\b/i,
@@ -90,7 +100,7 @@ export function classify(input: ClassificationInput): Classification {
   const is247 = input.is247 === true || RE.open247.test(hay);
   const saysEmergency = RE.emergency.test(hay);
   const saysUrgent = RE.urgent.test(hay);
-  const saysSpecialty = RE.specialty.test(hay);
+  const saysSpecialty = RE.specialty.test(hay) || RE.specialtyService.test(hay);
 
   // ── Strong signal 1: the source itself categorised the facility. ────────────
   // A source that maintains a type column has already done the classification work;
@@ -111,13 +121,34 @@ export function classify(input: ClassificationInput): Classification {
     return finish('specialty', 'active', `source type "${input.sourceType}"`, hay, is247);
   }
 
-  // ── Strong signal 2: explicit emergency naming AND round-the-clock operation. ──
+  // ── Strong signal 2: the source structurally asserts emergency service. ─────
+  // OSM `emergency=yes` is set deliberately by a mapper, not inferred from a name. It
+  // catches the after-hours ER — open 3 p.m. to 11 p.m., closed by day — which is a very
+  // common model and which a 24/7 test would wrongly reject. (Example found in the DMV:
+  // EMMAVet, emergency=yes, Mo-Fr 15:00-23:00.)
+  if (input.structuredEmergency === true) {
+    const type: FacilityType = saysSpecialty ? 'er_specialty' : 'er';
+    return finish(type, 'active', 'source asserts emergency service (structured tag)', hay, is247);
+  }
+
+  // ── Strong signal 3: explicit emergency naming AND round-the-clock operation. ──
   if (saysEmergency && is247) {
     const type: FacilityType = saysSpecialty ? 'er_specialty' : 'er';
     return finish(type, 'active', 'emergency naming + 24/7 hours', hay, is247);
   }
 
-  // ── Strong signal 3: unambiguous urgent-care naming. ───────────────────────
+  // ── Strong signal 4: round-the-clock operation on its own. ─────────────────
+  // §7 lists "24/7 hours" as a strong signal in its own right, and in practice a
+  // veterinary facility staffed around the clock IS an emergency facility — nobody runs
+  // overnight staff for wellness visits. Requiring emergency wording as well was stricter
+  // than the spec and cost real hospitals: Blue Ridge Veterinary Associates and both
+  // Virginia Veterinary Centers are 24/7 ERs whose names never say "emergency".
+  if (is247) {
+    const type: FacilityType = saysSpecialty ? 'er_specialty' : 'er';
+    return finish(type, 'active', '24/7 operation (no emergency wording in name)', hay, is247);
+  }
+
+  // ── Strong signal 5: unambiguous urgent-care naming. ───────────────────────
   if (saysUrgent && !RE.gpOnly.test(hay)) {
     return finish('urgent_care', 'active', 'explicit urgent-care naming', hay, is247);
   }

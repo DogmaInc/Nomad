@@ -43,3 +43,6 @@ scripts/seed/.cache/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Overpass response cache (§7.2 politeness) — do not commit
+scripts/seed/.cache/

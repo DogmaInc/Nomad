@@ -67,6 +67,18 @@ async function main() {
     console.log(`  ~ ${r.name}`);
     for (const change of r.changes) console.log(`      ${change}`);
   }
+
+  const suspects = results.filter((r) => r.possibleDuplicateOf);
+  if (suspects.length) {
+    console.log(`\n  ⚠ ${suspects.length} co-located but differently named — for /admin/review:`);
+    for (const r of suspects) {
+      const d = r.possibleDuplicateOf!;
+      console.log(
+        `    "${r.name}"\n      is ${Math.round(d.metres)} m from "${d.name}" ` +
+          `(name similarity ${d.similarity.toFixed(2)} — below the 0.45 auto-merge threshold)`,
+      );
+    }
+  }
   console.log(`  ${skipped.length} Bravo rows skipped (not emergency-layer or unusable)\n`);
 }
 

@@ -17,7 +17,7 @@
 import { dayClassFor } from './dayClass';
 import { localParts } from './localTime';
 import type {
-  EstimableFacility, Holiday, ModelParams, ShiftWindow, WaitEstimate,
+  DayClass, EstimableFacility, Holiday, ModelParams, ShiftWindow, WaitEstimate,
 } from './types';
 
 /**
@@ -33,14 +33,35 @@ export function estimateWait(
   params: ModelParams,
   holidays: ReadonlyMap<string, Holiday>,
 ): WaitEstimate | null {
+  const { hour, date, weekday } = localParts(at, facility.tz);
+  const dayClass = dayClassFor(date, weekday, holidays);
+  return estimateAtLocal(facility, hour, dayClass, params, date);
+}
+
+/**
+ * The model proper, evaluated at an explicit local hour and day class.
+ *
+ * `estimateWait` resolves an instant into these two values and delegates here, so there is
+ * exactly one place where the arithmetic lives (§6). The /admin/model inspection page calls
+ * this directly: it asks "what would a Sunday 2 a.m. look like", which is a question about
+ * a local hour and a day class, not about any particular instant. Going through a
+ * synthesised UTC timestamp would only add a conversion that could be wrong.
+ */
+export function estimateAtLocal(
+  facility: EstimableFacility,
+  localHour: number,
+  dayClass: DayClass,
+  params: ModelParams,
+  localDate = '',
+): WaitEstimate | null {
   if (facility.facilityType === 'specialty') return null;
 
   const base = params.baseWaits[facility.facilityType];
   const hodCurve = params.hodCurves[facility.facilityType];
   if (!base || !hodCurve) return null;
 
-  const { hour, date, weekday } = localParts(at, facility.tz);
-  const dayClass = dayClassFor(date, weekday, holidays);
+  const hour = localHour;
+  const date = localDate;
 
   const hodMult = hodCurve[hour] ?? 1;
   const dayMult = params.dayMults[dayClass] ?? 1;

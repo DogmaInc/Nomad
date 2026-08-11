@@ -14,7 +14,8 @@
     "db:push": "supabase db push",
     "seed:bravo": "tsx scripts/seed/bravo-dmv.ts",
     "seed:holidays": "tsx scripts/seed/holidays.ts",
-    "seed:density": "tsx scripts/seed/density.ts"
+    "seed:density": "tsx scripts/seed/density.ts",
+    "model:preview": "tsx scripts/model-preview.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

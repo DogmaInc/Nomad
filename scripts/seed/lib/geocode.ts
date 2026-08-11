@@ -97,6 +97,23 @@ async function nominatim(query: string) {
   };
 }
 
+/**
+ * Drop suite/unit designators.
+ *
+ * The Census matcher wants a plain street address and returns no match for
+ * "14300 Winterview Pkwy Suite 106". The suite does not change the coordinates — a pin is
+ * for the building — so stripping it is lossless for our purposes and recovers real
+ * facilities that would otherwise be dropped for a formatting reason.
+ */
+function withoutUnit(street: string): string {
+  return street
+    .replace(/[,#]?\s*\b(suite|ste|unit|apt|bldg|building|floor|fl)\b\.?\s*[\w-]*/gi, '')
+    .replace(/\s*#\s*[\w-]+/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .replace(/[,\s]+$/, '')
+    .trim();
+}
+
 export async function geocode(
   street: string,
   city: string,
@@ -109,19 +126,29 @@ export async function geocode(
   const hit = cached[key];
   if (hit) return 'failed' in hit ? null : hit;
 
+  const simplified = withoutUnit(street);
+  const attempts = simplified && simplified !== street ? [street, simplified] : [street];
+
   let result: GeocodeResult | null = null;
-  try {
-    result = await census(street, city, state, zip);
-  } catch {
-    // fall through to Nominatim
+  for (const attempt of attempts) {
+    try {
+      result = await census(attempt, city, state, zip);
+    } catch {
+      // fall through
+    }
+    if (result) break;
   }
 
   if (!result) {
     await sleep(1100); // Nominatim asks for ≤1 request/second
-    try {
-      result = await nominatim(`${street}, ${city}, ${state} ${zip ?? ''}`.trim());
-    } catch {
-      result = null;
+    for (const attempt of attempts) {
+      try {
+        result = await nominatim(`${attempt}, ${city}, ${state} ${zip ?? ''}`.trim());
+      } catch {
+        result = null;
+      }
+      if (result) break;
+      await sleep(1100);
     }
   }
 

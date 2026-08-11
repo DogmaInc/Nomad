@@ -97,7 +97,7 @@ export default function FacilityMap({
         new AttributionControl({
           compact: true,
           customAttribution:
-            '© OpenStreetMap contributors · Facility data: OSM, Bravo, clinics',
+            '© OpenStreetMap contributors · Facility data: verified from each hospital, OSM, clinics',
         }),
         'bottom-right',
       );

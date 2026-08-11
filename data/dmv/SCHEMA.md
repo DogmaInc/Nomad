@@ -6,9 +6,9 @@ drive to RIGHT NOW and be seen as a walk-in emergency or urgent care.
 ```json
 {
   "name": "Friendship Hospital for Animals",
-  "address1": "4105 Brandywine St NW",
+  "address1": "5025 Wisconsin Ave NW",
   "city": "Washington", "state": "DC", "zip": "20016",
-  "phone": "202-364-5300",
+  "phone": "202-363-7300",
   "website": "https://friendshiphospital.com",
   "type": "er | er_specialty | urgent_care",
   "is247": true,

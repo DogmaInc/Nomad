@@ -388,9 +388,25 @@ Two local sources were proposed as the starting point. Both were measured agains
 
 Bravo remains a *partial* seed, for one structural reason that has held up: it is **independent-only by construction** (`verification_status = 'verified_independent'`). ER/specialty is the most consolidated segment in veterinary medicine — VEG, BluePearl, MedVet, VCA, Thrive, Ethos — so the highest-volume ERs in any metro are the ones Bravo systematically excludes. In the DMV that means Friendship (DC), the NoVA VEG locations, BluePearl, MedVet, Hope and SouthPaws are all absent. **Bravo is the verified backbone; the web scrape (§7.2 source 3) supplies the rest, and without it the DMV map has holes exactly where a 2 a.m. user is most likely to be standing.**
 
+### 7.1b The precision failure of 2026-08-11 — read before writing any classifier
+
+The first DMV seed classified facilities by pattern-matching names, hours strings and OSM tags. Rod's review: *"the hospitals that are there are GP, Dentistry, Optho when it should only be Urgent Care, ER and ER/with Specialty."* He was right. The heuristic seed put an ophthalmologist, two dental/oral-surgery practices, an orthopedist and a 24-hour **general practice** on an emergency map, and still missed most of the region's real ERs. It achieved neither precision nor recall.
+
+**What actually went wrong, and the rules that follow from it:**
+
+1. **A pin is a claim.** §7 already said ambiguous rows go in as `needs_review` and are excluded from emergency ranking — but they were still rendering as pins. A pin on an emergency map *is* a ranking claim. The map now shows `status='active'` only.
+2. **`specialty` is not an emergency layer.** §8 barred it from ranking while §7 put it in the registry, and the map showed it. Appointment-only referral practices are excluded from the map entirely.
+3. **Prose is not a structured field.** Aldie Veterinary Hospital — a GP — was typed `er` because an OSM *description* read "open 24/7 daily". A machine-readable `opening_hours=24/7` and a marketing sentence are not the same claim. 24/7 without emergency wording now yields `needs_review`, never `active`.
+4. **Heuristics cannot see the things that matter most.** Only per-facility verification caught: Pet+ER Columbia closed in Sept 2025; Virginia Veterinary Centers' Cary St hospital consolidated into Short Pump while directories still list it; Greenbrier merged into VVSE; VETSS became a general practice; the Catonsville "24/7 ER" is now a Thrive that states it is *not* a full emergency hospital. **A pin on a closed building is worse than no pin** — someone drives there at 2 a.m. instead of somewhere open.
+5. **Lead-generation sites fabricate ERs.** Multiple SEO networks auto-generate "24 Hour Emergency Vet in ⟨town⟩" pages for towns that have **no ER at all**. They are the single biggest source of false positives in this vertical and they would poison any naive scrape. Never accept a facility whose only evidence is a directory or aggregator page.
+
+**Rule: the emergency layer is driven by evidence, not inference.** Every `active` er / er_specialty / urgent_care row must trace to a record carrying an `evidenceUrl` and a verbatim quote from the *facility's own site*. Heuristic importers still run — they are good at *finding candidates* — but they may only produce `needs_review`.
+
 ### 7.2 Sources
 
-Ordered by durability. **Rod has explicitly authorized broad web scraping (2026-08-10) — it is a required capability, not a fallback.** The measurements above are why: without it there is no DMV seed and no ER coverage.
+Ordered by trust. **Rod has explicitly authorized broad web scraping (2026-08-10) — it is a required capability, not a fallback.** The measurements above are why: without it there is no DMV seed and no ER coverage.
+
+0. **Verified records** (`data/dmv/*.json` → `scripts/seed/sources/verified.ts`) — the only source permitted to put a facility on the map. Plain JSON in git, reviewable line by line by a non-engineer, each row carrying its evidence. Validation rejects rather than repairs: a fabricated ER is a wrong turn at 2 a.m., a missing one is only a gap.
 
 1. **State veterinary board facility/premise license rosters** — public records; the clean backbone. Per-state importer modules in `scripts/seed/states/`; coverage varies by state (not all license premises) and that's fine. M1 ships MD, DC, VA.
 2. **OpenStreetMap** (Overpass: `amenity=veterinary` + emergency-signal tags/names) — ODbL: attribute OSM in the app footer, keep OSM IDs in `seed_sources` so OSM-derived rows stay isolatable if licensing review ever requires it.

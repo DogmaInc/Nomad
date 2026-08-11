@@ -99,14 +99,14 @@ export async function fetchBravoCandidates(
       is247: null, // Bravo does not track hours; never inferred from silence
     });
 
-    // Default: emergency-layer rows only. A GP has no place in an ER map's registry
-    // unless we deliberately want the review queue populated.
+    // Emergency layers only. `specialty` is excluded deliberately: an appointment-only
+    // ophthalmologist, dental surgeon or orthopedist cannot see a walk-in emergency, and
+    // importing them put exactly those practices on the map as pins beside real ERs.
     const isEmergencyLayer =
       classification.status === 'active' &&
       (classification.facilityType === 'er' ||
         classification.facilityType === 'er_specialty' ||
-        classification.facilityType === 'urgent_care' ||
-        classification.facilityType === 'specialty');
+        classification.facilityType === 'urgent_care');
 
     if (!isEmergencyLayer && !options.includeGeneralPractice) {
       skipped.push({ name, reason: `not an emergency-layer facility (${classification.reason})` });

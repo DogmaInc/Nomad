@@ -56,7 +56,22 @@ export interface FacilityQuery {
   state?: string;
   types?: FacilityType[];
   limit?: number;
+  /**
+   * Include appointment-only specialty practices. Off by default — see EMERGENCY_TYPES.
+   * Kept as an option because specialty rows still matter to /admin/review.
+   */
+  includeSpecialty?: boolean;
 }
+
+/**
+ * What belongs on an emergency map.
+ *
+ * `specialty` is deliberately NOT here. A referral ophthalmologist or an oral surgeon
+ * cannot help a pet owner at 2 a.m. — they are appointment-only, and §8 already bars them
+ * from ranking. Showing them as pins put a dental practice and an eye clinic on the map
+ * next to real ERs, which is noise at best and a wrong turn at worst.
+ */
+export const EMERGENCY_TYPES: FacilityType[] = ['er', 'er_specialty', 'urgent_care'];
 
 export async function getFacilities(query: FacilityQuery = {}): Promise<FacilityPin[]> {
   const db = publicDb();
@@ -67,12 +82,21 @@ export async function getFacilities(query: FacilityQuery = {}): Promise<Facility
     .select(
       'id, name, facility_type, status, address1, city, state, phone, website, lat, lng, tz, is_24_7, hours_confidence, density_mult',
     )
-    .neq('status', 'duplicate')
-    .neq('status', 'closed_permanently')
+    // Only `active`. §7 puts ambiguous classifications in as `needs_review` and excludes
+    // them from emergency ranking until a human confirms them — and a pin on an emergency
+    // map IS a ranking claim. An unconfirmed facility shown as an ER is the exact failure
+    // §7 exists to prevent, so needs_review stays in the registry and off the map.
+    .eq('status', 'active')
     .limit(query.limit ?? 500);
 
   if (query.state) select = select.eq('state', query.state.toUpperCase());
-  if (query.types?.length) select = select.in('facility_type', query.types);
+
+  const types = query.types?.length
+    ? query.types
+    : query.includeSpecialty
+      ? undefined
+      : EMERGENCY_TYPES;
+  if (types) select = select.in('facility_type', types);
   if (query.bbox) {
     const [west, south, east, north] = query.bbox;
     select = select.gte('lng', west).lte('lng', east).gte('lat', south).lte('lat', north);

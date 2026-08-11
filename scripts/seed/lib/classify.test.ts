@@ -57,19 +57,35 @@ describe('"Specialists" vs "Specialty"', () => {
   });
 });
 
-describe('24/7 as a strong signal in its own right (§7)', () => {
+describe('24/7 without emergency wording is a lead, not a conclusion (§7)', () => {
   // Real DMV hospitals whose names never say "emergency" but which run around the clock.
+  // They are plausible ERs, so they belong in the registry — but they are not put on the
+  // map on this basis alone. A verified record promotes them; a regex does not.
   it.each([
     'Blue Ridge Veterinary Associates',
     'Virginia Veterinary Centers',
-  ])('classifies %s as an ER on round-the-clock operation alone', (name) => {
+  ])('registers %s as needs_review on structured 24/7 alone', (name) => {
     const result = classify({ name, is247: true });
     expect(result.facilityType).toBe('er');
-    expect(result.status).toBe('active');
-    expect(result.reason).toContain('24/7');
+    expect(result.status).toBe('needs_review');
   });
 
-  it('adds overnight_care to any 24/7 ER even when no source says the word', () => {
+  it('distinguishes structured 24/7 from a marketing sentence', () => {
+    // Aldie Veterinary Hospital is a general practice. Its ONLY 24/7 signal was an OSM
+    // description reading "Animal Veterinary Hospital that is open 24/7 daily", and that
+    // put it on an emergency map. Prose must be recognisably the weakest basis.
+    const prose = classify({
+      name: 'Aldie Veterinary Hospital',
+      text: 'Animal Veterinary Hospital that is open 24/7 daily.',
+    });
+    expect(prose.status).toBe('needs_review');
+    expect(prose.reason).toContain('prose');
+
+    const structured = classify({ name: 'Some Animal Hospital', is247: true });
+    expect(structured.reason).toContain('structured');
+  });
+
+  it('adds overnight_care to any 24/7 facility even when no source says the word', () => {
     expect(classify({ name: 'Some Animal Hospital', is247: true }).capabilities)
       .toContain('overnight_care');
   });

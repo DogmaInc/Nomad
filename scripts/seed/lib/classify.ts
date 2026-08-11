@@ -97,7 +97,14 @@ export function classify(input: ClassificationInput): Classification {
   const hay = haystack(input);
   const sourceType = (input.sourceType ?? '').toLowerCase().trim();
 
-  const is247 = input.is247 === true || RE.open247.test(hay);
+  // Structured vs prose 24/7 are NOT the same claim and must not be trusted equally.
+  // A source that sets `opening_hours=24/7` is asserting a fact in a machine field. A
+  // sentence in a description that happens to contain "open 24/7 daily" is marketing copy
+  // that may describe a general practice. Collapsing the two put Aldie Veterinary Hospital
+  // — a GP — on the map as an ER.
+  const is247Structured = input.is247 === true;
+  const mentions247 = RE.open247.test(hay);
+  const is247 = is247Structured || mentions247;
   const saysEmergency = RE.emergency.test(hay);
   const saysUrgent = RE.urgent.test(hay);
   const saysSpecialty = RE.specialty.test(hay) || RE.specialtyService.test(hay);
@@ -137,15 +144,22 @@ export function classify(input: ClassificationInput): Classification {
     return finish(type, 'active', 'emergency naming + 24/7 hours', hay, is247);
   }
 
-  // ── Strong signal 4: round-the-clock operation on its own. ─────────────────
-  // §7 lists "24/7 hours" as a strong signal in its own right, and in practice a
-  // veterinary facility staffed around the clock IS an emergency facility — nobody runs
-  // overnight staff for wellness visits. Requiring emergency wording as well was stricter
-  // than the spec and cost real hospitals: Blue Ridge Veterinary Associates and both
-  // Virginia Veterinary Centers are 24/7 ERs whose names never say "emergency".
+  // ── Weak signal: round-the-clock operation with no emergency wording anywhere. ──
+  // §7 lists "24/7 hours" as a strong signal, and often it is — Blue Ridge Veterinary
+  // Associates and both Virginia Veterinary Centers are real 24/7 ERs whose names never
+  // say "emergency". But the inverse also exists: a general practice that keeps 24-hour
+  // boarding staff, or a source whose hours are simply wrong.
+  //
+  // So this earns a place in the registry but NOT on the map. `needs_review` keeps the row
+  // and its provenance for /admin/review while withholding the claim "you can be seen here
+  // at 2 a.m." until a human or a verified record confirms it. Prose-only 24/7 is weaker
+  // still and lands in the same place.
   if (is247) {
     const type: FacilityType = saysSpecialty ? 'er_specialty' : 'er';
-    return finish(type, 'active', '24/7 operation (no emergency wording in name)', hay, is247);
+    const basis = is247Structured
+      ? '24/7 hours from a structured field, but no emergency wording — needs confirmation'
+      : '24/7 mentioned only in prose, no emergency wording — weakest possible basis';
+    return finish(type, 'needs_review', basis, hay, is247);
   }
 
   // ── Strong signal 5: unambiguous urgent-care naming. ───────────────────────

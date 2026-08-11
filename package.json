@@ -11,7 +11,8 @@
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
     "db:diff": "supabase db diff",
-    "db:push": "supabase db push"
+    "db:push": "supabase db push",
+    "seed:bravo": "tsx scripts/seed/bravo-dmv.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

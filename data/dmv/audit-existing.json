@@ -1,0 +1,332 @@
+[
+  {
+    "name": "Veterinary Emergency Group",
+    "verdict": "keep",
+    "currentType": "er",
+    "correctType": "er",
+    "reason": "VEG is a 24/7 no-appointment walk-in emergency hospital; note DC actually has two distinct VEG locations (Georgetown 2311 M St NW and H Street 925 H St NE) so one physical-location record may be missing.",
+    "evidenceUrl": "https://www.veg.com/locations/washington-dc/georgetown",
+    "evidenceQuote": "24 Hour Emergency Vet in Georgetown, DC | OPEN 24/7",
+    "confidence": "high"
+  },
+  {
+    "name": "Pet+ER (Towson)",
+    "verdict": "keep",
+    "currentType": "er",
+    "correctType": "er",
+    "reason": "Still a genuine 24/7 VECCS-certified emergency and critical care hospital, but the Towson address is stale — it relocated to 10626 York Road, Cockeysville and the record's address/city must be corrected.",
+    "evidenceUrl": "https://www.pet-er.net/",
+    "evidenceQuote": "The only certified veterinary emergency and critical care center in Maryland",
+    "confidence": "high"
+  },
+  {
+    "name": "Mountain View Animal Emergency",
+    "verdict": "keep",
+    "currentType": "er",
+    "correctType": "er",
+    "reason": "Dedicated walk-in emergency hospital with a surgical suite and in-house lab, though open 10am-2am rather than 24/7 so is247 must be false.",
+    "evidenceUrl": "https://mountainviewemergency.com/",
+    "evidenceQuote": "10am - 2am, 7 days a week",
+    "confidence": "high"
+  },
+  {
+    "name": "Pet+ER (10000 Old Columbia Road)",
+    "verdict": "remove",
+    "currentType": "er",
+    "correctType": null,
+    "reason": "Permanently closed at the end of September 2025; the site is now occupied by an unrelated practice, VivaVets Animal Hospital.",
+    "evidenceUrl": "https://patch.com/maryland/columbia/urgent-care-returns-former-pet-er-location-vivavets-animal-hospital-now-open",
+    "evidenceQuote": "Urgent Care Returns to Former Pet+ER Location: VivaVets Animal Hospital Now Open",
+    "confidence": "high"
+  },
+  {
+    "name": "Animal Emergency Hospital",
+    "verdict": "keep",
+    "currentType": "er",
+    "correctType": "er",
+    "reason": "Dedicated 24/7 emergency and critical care hospital with onsite surgery, radiology and hospitalization.",
+    "evidenceUrl": "https://www.marylandpetemergency.com/our-hospital.html",
+    "evidenceQuote": "emergency and critical care including onsite lab procedures, radiology, surgery, monitoring and hospitalization",
+    "confidence": "high"
+  },
+  {
+    "name": "Veterinary Emergency Group",
+    "verdict": "keep",
+    "currentType": "er",
+    "correctType": "er",
+    "reason": "24/7 walk-in emergency hospital; VEG takes no appointments and sees emergencies around the clock.",
+    "evidenceUrl": "https://www.veg.com/locations/virginia/falls-church",
+    "evidenceQuote": "24 Hour Emergency Vet in Falls Church, VA | OPEN 24/7",
+    "confidence": "high"
+  },
+  {
+    "name": "Bay Beach Veterinary Emergency Hospital",
+    "verdict": "keep",
+    "currentType": "er",
+    "correctType": "er",
+    "reason": "Standalone 24/7 walk-in emergency hospital, separate from its sister general practice Bay Beach Veterinary Hospital.",
+    "evidenceUrl": "https://baybeachemergencyvet.com/",
+    "evidenceQuote": "emergency and urgent vet care—day or night, 365 days a year",
+    "confidence": "high"
+  },
+  {
+    "name": "Virginia Veterinary Centers",
+    "verdict": "remove",
+    "currentType": "er",
+    "correctType": null,
+    "reason": "The Cary Street Richmond hospital no longer appears among VVC's locations (only Fredericksburg, Midlothian and Short Pump are listed) and its phone number is now the Short Pump hospital's — operations appear consolidated into Short Pump; confirm by phone before final deletion.",
+    "evidenceUrl": "https://www.virginiaveterinarycenters.com/locations",
+    "evidenceQuote": "Fredericksburg: (540) 372-3470 Midlothian: (804) 744-9800 Short Pump: (804) 353-9000",
+    "confidence": "medium"
+  },
+  {
+    "name": "Blue Ridge Veterinary Associates",
+    "verdict": "reclassify",
+    "currentType": "er",
+    "correctType": "urgent_care",
+    "reason": "Not an ER — it is a wellness/boarding/daycare general practice that adds overnight urgent care only on Friday, Saturday and Sunday, so it qualifies as urgent care rather than a 24/7 emergency hospital.",
+    "evidenceUrl": "https://www.blueridgevets.com/emergency",
+    "evidenceQuote": "Blue Ridge Veterinary Associates is open 7 days a week, with overnight urgent care on Fridays, Saturdays, and Sundays.",
+    "confidence": "medium"
+  },
+  {
+    "name": "Virginia Veterinary Centers - Short Pump",
+    "verdict": "reclassify",
+    "currentType": "er",
+    "correctType": "er_specialty",
+    "reason": "It is 24/7 emergency PLUS a full board-certified specialty referral roster under one roof, so it belongs in er_specialty rather than er.",
+    "evidenceUrl": "https://www.virginiaveterinarycenters.com/locations/short-pump",
+    "evidenceQuote": "a 24-hour emergency and specialty animal hospital",
+    "confidence": "high"
+  },
+  {
+    "name": "Aldie Veterinary Hospital",
+    "verdict": "remove",
+    "currentType": "er",
+    "correctType": null,
+    "reason": "General practice, not an ER — now operating as Thrive's Dulles South Veterinary Center with daytime hours only; the '24/7' signal came from the separate emergency hospital sharing the building, and the practice itself refers emergencies out.",
+    "evidenceUrl": "https://www.thrivepetcare.com/locations/virginia/south-riding/dulles-south-veterinary-center",
+    "evidenceQuote": "If your pet is experiencing a medical emergency, please call or visit your local veterinarian immediately.",
+    "confidence": "high"
+  },
+  {
+    "name": "Columbia Pike Animal Hospital & Emergency Center",
+    "verdict": "keep",
+    "currentType": "er",
+    "correctType": "er",
+    "reason": "Genuine 24/7 walk-in emergency hospital with overnight in-hospital care, even though it also runs a general practice under the same roof.",
+    "evidenceUrl": "https://www.columbiapikeanimalh.com/services/pets/emergency-vet",
+    "evidenceQuote": "24/7 Emergency Vet in Annandale, VA | No Extra ER Fee",
+    "confidence": "high"
+  },
+  {
+    "name": "EMMAVet",
+    "verdict": "reclassify",
+    "currentType": "er",
+    "correctType": "urgent_care",
+    "reason": "Walk-in urgent care with 8am/9am-9pm hours, not a 24/7 ER — it refers cases needing round-the-clock care to a 24-hour emergency hospital.",
+    "evidenceUrl": "https://www.emmavet.com/services/urgent-care/",
+    "evidenceQuote": "we will help coordinate a referral to an appropriate 24-hour emergency animal hospital",
+    "confidence": "high"
+  },
+  {
+    "name": "Apex Vets",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "Emergency and critical care with walk-ins welcome plus board-certified surgery, neurology, cardiology and internal medicine in the same hospital.",
+    "evidenceUrl": "https://apex.vet/",
+    "evidenceQuote": "Apex Vets | Specialty & Emergency Veterinarian in Silver Spring, MD",
+    "confidence": "high"
+  },
+  {
+    "name": "Chesapeake Veterinary Referral Center",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "The Annapolis site (808 Bestgate Rd) publishes a dedicated ER line alongside its specialty departments and is the co-located 24-hour emergency clinic; watch for a duplicate if Anne Arundel Veterinary Emergency Clinic is seeded separately at the same address.",
+    "evidenceUrl": "https://cvrc.com/",
+    "evidenceQuote": "CVRC has been a premier emergency and specialty veterinary facility offering exceptional service and medical expertise in the Mid-Atlantic region.",
+    "confidence": "high"
+  },
+  {
+    "name": "Town and Country Veterinary Clinic & Emergency Hospital",
+    "verdict": "reclassify",
+    "currentType": "er_specialty",
+    "correctType": "er",
+    "reason": "Real 24-hour emergency hospital with an ICU, but it is a general practice plus ER offering advanced surgery — there is no board-certified specialty referral service, so er_specialty overstates it.",
+    "evidenceUrl": "https://tcvccares247.com/24-hour-emergencies/",
+    "evidenceQuote": "24 Hour Emergencies | 24-7 Veterinarian Urgent Care",
+    "confidence": "medium"
+  },
+  {
+    "name": "Dulles South Animal Emergency and Referral Hospital",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "A genuinely distinct facility from Aldie/Dulles South Veterinary Center — different suite (100 vs 101), different phone, 24/7 emergency with overnight care and emergency surgery; the referral/specialty roster is asserted by the hospital but its board-certified departments could not be independently confirmed.",
+    "evidenceUrl": "https://dullesanimalemergency.com/",
+    "evidenceQuote": "provides urgent care 24 hours a day, 7 days a week, 365 days a year",
+    "confidence": "medium"
+  },
+  {
+    "name": "Cladda Veterinary Emergency & Specialty Team",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "24/7 emergency hospital with overnight hospitalization, emergency surgery, CT and specialty services in one building.",
+    "evidenceUrl": "https://www.claddavet.com/",
+    "evidenceQuote": "24/7 Cladda Veterinary Emergency & Specialty Team | Emergency Veterinarian for your Pet",
+    "confidence": "high"
+  },
+  {
+    "name": "VCA SouthPaws Veterinary Specialists & Emergency Center",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "24-hour emergency and critical care alongside surgery, oncology, internal medicine, radiology, neurology and ophthalmology departments.",
+    "evidenceUrl": "https://vcahospitals.com/southpaws/departments/emergency-critical-care",
+    "evidenceQuote": "VCA SouthPaws Veterinary Specialists & 24-hour Emergency Center has been serving the metropolitan DC community 24 hours a day, seven days a week",
+    "confidence": "high"
+  },
+  {
+    "name": "Partner Veterinary Emergency and Specialty Center",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "24-hour emergency care plus by-appointment specialty services including surgery, neurology, internal medicine and oncology.",
+    "evidenceUrl": "https://partnervesc.com/emergency-rva/",
+    "evidenceQuote": "offers 24-hour emergency care and by-appointment specialty care",
+    "confidence": "high"
+  },
+  {
+    "name": "Veterinary Emergency & Specialty of Tidewater",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "Emergency and specialty hospital with CT, endoscopy and board-certified critical care specialists; note it is not fully 24/7 (closed Thursdays), so is247 should be false.",
+    "evidenceUrl": "https://vestvets.com/",
+    "evidenceQuote": "a state-of-the-art emergency and specialty hospital",
+    "confidence": "high"
+  },
+  {
+    "name": "Veterinary Referral & Critical Care (VRCC)",
+    "verdict": "keep",
+    "currentType": "er_specialty",
+    "correctType": "er_specialty",
+    "reason": "24-hour emergency with no referral required for ER visits, plus board-certified internal medicine, surgery and neurology; address is 1596 Hockett Rd, Manakin-Sabot VA 23103 and should be filled in.",
+    "evidenceUrl": "https://vrccvet.com/",
+    "evidenceQuote": "Privately Owned Specialty & ER Veterinary Hospital In Manakin-Sabot, VA",
+    "confidence": "high"
+  },
+  {
+    "name": "Armour Veterinary Ophthalmology",
+    "verdict": "remove",
+    "currentType": "specialty",
+    "correctType": null,
+    "reason": "Ophthalmology-only referral practice operating weekday appointment hours inside Friendship Hospital for Animals; no emergency service of its own.",
+    "evidenceUrl": "https://armoureyevet.com/about/",
+    "evidenceQuote": "Armour Veterinary Ophthalmology sees appointments at Friendship, Monday through Thursday 8am-4:00pm and Friday 8am-12pm",
+    "confidence": "high"
+  },
+  {
+    "name": "Maryland Veterinary Surgical Services",
+    "verdict": "remove",
+    "currentType": "specialty",
+    "correctType": null,
+    "reason": "Surgical referral-only practice — no walk-in emergency or urgent care service.",
+    "evidenceUrl": "https://www.mdvss.com/our-mission/",
+    "evidenceQuote": "a high-quality, family-owned, client-oriented, patient-centered surgical referral practice",
+    "confidence": "high"
+  },
+  {
+    "name": "Fusion Veterinary Orthopedics",
+    "verdict": "remove",
+    "currentType": "specialty",
+    "correctType": null,
+    "reason": "Orthopedics-only surgical practice with weekday 8am-6pm hours and no emergency service.",
+    "evidenceUrl": "https://fusionvetortho.com/",
+    "evidenceQuote": "advanced orthopedic surgery, rehab, and sports medicine for dogs",
+    "confidence": "high"
+  },
+  {
+    "name": "Animal Dentistry & Oral Surgery",
+    "verdict": "remove",
+    "currentType": "specialty",
+    "correctType": null,
+    "reason": "Referral-only veterinary dental specialty practice; the emergency capability at its address belongs to the host hospital (The LifeCentre), which is a separate facility worth seeding on its own.",
+    "evidenceUrl": "https://animaldentalspecialist.com/",
+    "evidenceQuote": "devoted exclusively to the oral surgical and dental health care needs of domestic pets",
+    "confidence": "high"
+  },
+  {
+    "name": "Capital Area Veterinary Oral Surgery",
+    "verdict": "remove",
+    "currentType": "specialty",
+    "correctType": null,
+    "reason": "Oral surgery and veterinary dentistry only, weekdays 8am-5pm, closed weekends — no emergency or walk-in service.",
+    "evidenceUrl": "https://cavosvets.com/pet-services/",
+    "evidenceQuote": "specialized veterinary oral surgery for dogs and cats in Alexandria, Virginia",
+    "confidence": "high"
+  },
+  {
+    "name": "Veterinary Specialists of Hanover",
+    "verdict": "remove",
+    "currentType": "specialty",
+    "correctType": null,
+    "reason": "Specialty referral practice open Monday-Friday 8am-5pm that explicitly refers all urgent and emergency cases out to other hospitals.",
+    "evidenceUrl": "https://www.hanovervets.com/urgent-care-emergencies",
+    "evidenceQuote": "Monday – Friday 8am – 5pm",
+    "confidence": "high"
+  },
+  {
+    "name": "ACHIEVE Veterinary Urgent Care",
+    "verdict": "keep",
+    "currentType": "urgent_care",
+    "correctType": "urgent_care",
+    "reason": "Purpose-built walk-in urgent care; appointments optional, walk-ins accepted during its 2pm-10pm Sunday-Wednesday hours.",
+    "evidenceUrl": "https://achievevet.com/",
+    "evidenceQuote": "can be done online, by calling in or walking into the facility",
+    "confidence": "high"
+  },
+  {
+    "name": "Royal Oak Veterinary + Urgent Care",
+    "verdict": "keep",
+    "currentType": "urgent_care",
+    "correctType": "urgent_care",
+    "reason": "Genuine walk-in urgent care with extended evening and Sunday hours alongside a scheduled-appointment general practice.",
+    "evidenceUrl": "https://royaloakvets.com/",
+    "evidenceQuote": "If your cat or dog requires urgent care during our open hours, walk-in visits are accepted.",
+    "confidence": "high"
+  },
+  {
+    "name": "Meadow Branch Animal Hospital",
+    "verdict": "remove",
+    "currentType": "urgent_care",
+    "correctType": null,
+    "reason": "General practice with an appointment-required 'urgent care' label — no walk-ins, closed weekends and closed by 6-7pm, so it fails the walk-in same-day test.",
+    "evidenceUrl": "https://www.meadowbranchanimalhospital.com/",
+    "evidenceQuote": "We are now offering veterinary urgent care (appointment required).",
+    "confidence": "high"
+  },
+  {
+    "name": "Summit Veterinary Care",
+    "verdict": "keep",
+    "currentType": "urgent_care",
+    "correctType": "urgent_care",
+    "reason": "Accepts walk-in urgent care for sick pets during extended hours (Mon-Fri 8am-8pm, Sat 11am-7pm) and refers overnight cases to MedVet Manassas.",
+    "evidenceUrl": "https://summitvetva.com/faqs/",
+    "evidenceQuote": "We do accept walk-in appointments, however, we encourage scheduling an appointment if possible to ensure a prompt visit for you and your pet.",
+    "confidence": "high"
+  },
+  {
+    "name": "Autumn Trails Veterinary Center",
+    "verdict": "keep",
+    "currentType": "urgent_care",
+    "correctType": "urgent_care",
+    "reason": "True walk-in urgent care 8am-8pm seven days a week, open to non-established clients.",
+    "evidenceUrl": "https://autumntrailsvet.com/urgent-care/",
+    "evidenceQuote": "You may walk-in or call ahead at 434.971.9800 and make an appointment to be seen at a specific time.",
+    "confidence": "high"
+  }
+]

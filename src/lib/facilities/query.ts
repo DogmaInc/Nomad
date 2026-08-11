@@ -29,6 +29,8 @@ export interface FacilityPin {
   lng: number;
   is247: boolean | null;
   hoursConfidence: HoursConfidence;
+  /** Capability chips (§10.1) — what this hospital can actually do at 2 a.m. */
+  capabilities: string[];
   /** Null for specialty — appointment-based, no walk-in queue to model (§8). */
   estimate: {
     p50Minutes: number;
@@ -80,7 +82,7 @@ export async function getFacilities(query: FacilityQuery = {}): Promise<Facility
   let select = db
     .from('facilities')
     .select(
-      'id, name, facility_type, status, address1, city, state, phone, website, lat, lng, tz, is_24_7, hours_confidence, density_mult',
+      'id, name, facility_type, status, address1, city, state, phone, website, lat, lng, tz, is_24_7, hours_confidence, density_mult, facility_capabilities(capability)',
     )
     // Only `active`. §7 puts ambiguous classifications in as `needs_review` and excludes
     // them from emergency ranking until a human confirms them — and a pin on an emergency
@@ -134,6 +136,9 @@ export async function getFacilities(query: FacilityQuery = {}): Promise<Facility
       lng: Number(row.lng),
       is247: row.is_24_7,
       hoursConfidence: row.hours_confidence,
+      capabilities: (row.facility_capabilities ?? []).map(
+        (c: { capability: string }) => c.capability,
+      ),
       estimate: estimate
         ? {
             p50Minutes: estimate.p50Minutes,

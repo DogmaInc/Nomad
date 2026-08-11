@@ -13,6 +13,22 @@ import type { FacilityPin } from '@/lib/facilities/query';
  * Pre-design, as with the map: §12's reference pass is still owed.
  */
 
+/** Plain words. A frightened owner should not have to decode a schema enum. */
+const CAPABILITY_LABEL: Record<string, string> = {
+  overnight_care: 'Overnight care',
+  exotics: 'Exotics',
+  avian: 'Birds',
+  oxygen_support: 'Oxygen',
+  isolation: 'Isolation ward',
+  er_surgery: 'Emergency surgery',
+  endoscopy: 'Endoscopy',
+  ventilator: 'Ventilator',
+  blood_products: 'Blood transfusion',
+  ct: 'CT scan',
+  mri: 'MRI',
+  dialysis: 'Dialysis',
+};
+
 const TYPE_LABEL: Record<string, string> = {
   er: 'Emergency hospital',
   er_specialty: 'Emergency + specialty',
@@ -97,6 +113,22 @@ export function FacilitySheet({
 
       {facility.hoursConfidence === 'unknown' && !facility.is247 ? (
         <p className="mt-3 text-sm text-amber-300">Hours unknown — call first.</p>
+      ) : null}
+
+      {/* Capability chips (§10.1). These are the questions that actually decide where a
+          critical case should go — an ER without a ventilator or blood products cannot
+          treat some cases at all, and that is worth knowing before driving. */}
+      {facility.capabilities.length ? (
+        <ul className="mt-3 flex flex-wrap gap-1.5">
+          {facility.capabilities.map((capability) => (
+            <li
+              key={capability}
+              className="rounded-full border border-slate-700 px-2.5 py-1 text-xs text-slate-300"
+            >
+              {CAPABILITY_LABEL[capability] ?? capability.replace(/_/g, ' ')}
+            </li>
+          ))}
+        </ul>
       ) : null}
 
       {/* ── the two actions that matter ── */}

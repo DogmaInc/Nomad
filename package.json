@@ -20,7 +20,8 @@
     "postinstall": "node scripts/copy-maplibre-worker.mjs",
     "seed:verified": "tsx scripts/seed/verified-dmv.ts",
     "seed:audit": "tsx scripts/seed/apply-audit.ts",
-    "seed:hours": "tsx scripts/seed/enrich-hours.ts"
+    "seed:hours": "tsx scripts/seed/enrich-hours.ts",
+    "seed:hybrids": "tsx scripts/seed/remove-hybrids.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

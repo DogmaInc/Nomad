@@ -49,27 +49,37 @@ So:
 The display layer carries the caveat, not the registry: hours are shown with "call to
 confirm" because they may be stale in either direction.
 
-## Rule 2 — urgent care means the business model, not a service line
+## Rule 2 — dedicated facilities only. No GP/urgent-care hybrids.
 
-Include a facility as `urgent_care` when **walk-in urgent care is what the business is
-for**. That includes hospitals that are deliberately BOTH general practice AND urgent
-care — Bond Vet, Heart + Paw, Small Door, Modern Animal, PetMedic, UrgentVet, Vetco Total
-Care and similar. For those, same-day walk-in sick care is the core proposition, not a
-favour they do for existing clients. **Include them.**
+**Superseded 2026-08-12.** An earlier version of this rule admitted hospitals that are both
+general practice AND urgent care. That was wrong and is reversed: Bond Vet, Small Door,
+Livewell, PetWellClinic, CityVet and Heart + Paw are all now excluded.
 
-Exclude a general practice that merely *lists* urgent care among its services. The test:
+The reason is a modelling constraint, not a preference. §6 estimates a wait for a facility
+**type**. A primary-care clinic that also takes walk-ins has completely different queue
+dynamics from a dedicated urgent care: its day is already booked with wellness
+appointments, so a walk-in sick pet waits behind a vaccination schedule. Mixing the two into
+one type makes the type meaningless and every estimate for both of them worse — the system
+genuinely cannot tell the difference.
+
+**The test is the facility's PRIMARY function, not whether it accepts walk-ins:**
 
 | Include | Exclude |
 |---|---|
-| Walk-ins are the model — advertised on the homepage | "We accommodate urgent cases during business hours" |
-| Open to anyone, not just existing clients | Current clients only |
-| Extended evenings/weekends built for urgent care | Ordinary Mon–Fri 9–5 practice hours |
-| No appointment needed (or same-day guaranteed) | Appointment required |
+| Dedicated emergency hospital | General practice, however convenient |
+| Dedicated emergency + specialty hospital | GP that also runs urgent-care hours |
+| Dedicated walk-in urgent care clinic — urgent care IS the whole business | Membership primary care with walk-in availability |
+| Specialty hospital whose urgent care runs as its own service (e.g. BluePearl Urgent Care) | Wellness/preventive walk-in clinic |
 
-Both of these fail the test even though they say "urgent care":
-- *Meadow Branch Animal Hospital* — "veterinary urgent care (appointment required)",
-  closed weekends.
-- *Caring Hands* — "During our regular hours, we do our best to accommodate urgent cases."
+Concrete calls already made, for calibration:
+- **Include:** UrgentVet, PetMedic, ACHIEVE, Ally, Furgent Care, Old Line, Loudoun Urgent
+  Vet, Urgent Animal Care of Arlington, Vets Now!, BetterPet, EMMAvet, BluePearl Urgent Care.
+- **Exclude:** Bond Vet, Small Door, Livewell, PetWellClinic, CityVet, Heart + Paw, Thrive
+  (any location), VivaVets, Swan Harbor, Blue Ridge Veterinary Associates, Royal Oak,
+  Autumn Trails, Caring Hands, District Veterinary, Nova Pets, Vetco Total Care.
+
+Note the interaction with Rule 1: a **dedicated ER** is never excluded for reduced hours. A
+**general practice** is excluded regardless of how long it stays open.
 
 ## EXCLUDE
 

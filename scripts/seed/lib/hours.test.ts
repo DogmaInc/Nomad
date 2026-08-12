@@ -109,3 +109,31 @@ describe('the unknown case', () => {
     expect(result.hoursText).toBe('24/7');
   });
 });
+
+describe('the Royal Oak false positive', () => {
+  // Real regression. Royal Oak Veterinary + Urgent Care was written to the database as
+  // 24/7 while its published schedule showed two closed days, because the page mentions a
+  // 24-hour hospital it refers cases to. Almost every veterinary site says "24 hour"
+  // somewhere, usually about somebody else.
+  it('does not infer 24/7 from a mention elsewhere on the page', () => {
+    const html = `
+      <p>Mon 8AM - 5PM; Tue Closed; Wed Closed; Thu 8AM - 10PM</p>
+      <p>For overnight emergencies we refer clients to a 24-hour emergency hospital.</p>`;
+    const result = extractHours(html);
+    expect(result.hoursText).toContain('Mon 8AM - 5PM');
+    expect(result.is247).toBe(false);
+  });
+
+  it('trusts an explicit closure over a contradictory 24-hour phrase in the schedule', () => {
+    const html = '<p>Monday - Sunday: 24 Hours; Saturday &amp; Sunday: Closed</p>';
+    expect(extractHours(html).is247).toBe(false);
+  });
+
+  it('still accepts a genuine round-the-clock schedule', () => {
+    expect(extractHours('<p>Open Mon-Sun 24 hours</p>').is247).toBe(true);
+    const jsonld = `<script type="application/ld+json">${JSON.stringify({
+      openingHours: 'Mo-Su 00:00-23:59',
+    })}</script>`;
+    expect(extractHours(jsonld).is247).toBe(true);
+  });
+});

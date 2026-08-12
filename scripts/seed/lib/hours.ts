@@ -134,29 +134,41 @@ export function extractTextHours(text: string, cap = 10): string | null {
   return lines.length ? lines.join('; ') : null;
 }
 
+/**
+ * Decide 24/7 from the EXTRACTED HOURS ONLY — never from the whole page.
+ *
+ * This caused a real false positive. Royal Oak Veterinary + Urgent Care was marked 24/7
+ * while its own schedule read "Mon 8AM-5PM; Tue Closed; Wed Closed", because somewhere on
+ * the page it says it refers cases to a 24-hour emergency hospital. Almost every veterinary
+ * site mentions "24 hour" at some point — usually about somebody else's hospital — so the
+ * full page is the wrong haystack. Falsely telling someone a closed clinic is open all
+ * night is among the worst errors this product can make.
+ *
+ * A schedule that covers every day with no gaps is the other legitimate signal: JSON-LD
+ * encodes 24/7 as 00:00-23:59 or 00:00-24:00.
+ */
+function is247FromHours(hoursText: string): boolean {
+  if (/00:00(:00)?\s*-\s*(23:59|24:00|00:00)/.test(hoursText)) return true;
+  if (!OPEN_247_RE.test(hoursText)) return false;
+  // "24 hours" alongside an explicit closure is a contradiction; trust the closure.
+  return !/\bclosed\b/i.test(hoursText);
+}
+
 export function extractHours(html: string): ExtractedHours {
   const text = visibleText(html);
 
   const jsonld = extractJsonLdHours(html);
   if (jsonld) {
-    return {
-      hoursText: jsonld,
-      // A JSON-LD spec of 00:00-23:59 (or 00:00-00:00) is how sites encode 24/7.
-      is247: /00:00\s*-\s*(23:59|00:00)/.test(jsonld) || OPEN_247_RE.test(jsonld)
-        ? true
-        : OPEN_247_RE.test(text)
-          ? true
-          : false,
-      source: 'jsonld',
-    };
+    return { hoursText: jsonld, is247: is247FromHours(jsonld), source: 'jsonld' };
   }
 
   const textHours = extractTextHours(text);
   if (textHours) {
-    return { hoursText: textHours, is247: OPEN_247_RE.test(text) ? true : false, source: 'text' };
+    return { hoursText: textHours, is247: is247FromHours(textHours), source: 'text' };
   }
 
-  // Nothing found. A bare 24/7 claim with no schedule is still worth believing.
+  // No schedule anywhere. A bare "open 24/7" line is still a claim about this facility,
+  // but only when the page offers nothing else to contradict it.
   if (OPEN_247_RE.test(text)) {
     return { hoursText: '24/7', is247: true, source: 'text' };
   }

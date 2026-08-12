@@ -56,6 +56,9 @@ export function FacilitySheet({
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  const isEmergency =
+    facility.facilityType === 'er' || facility.facilityType === 'er_specialty';
+
   const directions = `https://www.google.com/maps/dir/?api=1&destination=${facility.lat},${facility.lng}`;
   const address = [facility.address1, facility.city, facility.state]
     .filter(Boolean)
@@ -111,8 +114,18 @@ export function FacilitySheet({
         )}
       </div>
 
+      {/* Hours honesty (§6.3).
+          An emergency hospital that is not currently 24/7 stays on the map — policy changes
+          constantly and websites lag, so published hours can be stale in either direction.
+          The caveat goes here, in the display, rather than being resolved by quietly
+          dropping the hospital from the registry. */}
       {facility.hoursConfidence === 'unknown' && !facility.is247 ? (
         <p className="mt-3 text-sm text-amber-300">Hours unknown — call first.</p>
+      ) : isEmergency && !facility.is247 ? (
+        <p className="mt-3 text-sm text-amber-300">
+          Not listed as 24/7 right now — emergency hours change often and sites lag. Call
+          before you drive.
+        </p>
       ) : null}
 
       {/* Capability chips (§10.1). These are the questions that actually decide where a

@@ -329,7 +329,8 @@ If a computed pattern would make an ER tech laugh, the model is wrong — fix th
 
 - Never a bare number. Always a rounded, friendly range + provenance + freshness: *"Typically 2–3.5 hr at this hour (modeled — call to confirm)."*
 - Rounding: <90 min → 15-min steps; ≥90 min → half-hour steps; ≥4 hr → "4–6 hr+".
-- Closed-now facilities (per `hours`) show "Opens 8 a.m." and are excluded from "seen fastest" ranking; unknown hours on a non-24/7 type show "Hours unknown — call first."
+- Closed-now facilities (per `hours`) show "Opens 8 a.m." and are de-prioritised in "seen fastest" ranking; unknown hours on a non-24/7 type show "Hours unknown — call first."
+- **An ER is never removed from the map or the registry for having reduced hours (Rod, 2026-08-11).** Hospital policy changes constantly and leadership is slow to update the website, so published hours are a snapshot of what someone last edited — not a statement about what kind of facility it is. A hospital that ran 24/7 last month and posts weekday-only hours today is still the emergency hospital in that town. Reduced, weekend-only or overnight-only coverage stays `er`; only a permanent closure or a confirmed end of emergency service removes it, and that needs its own evidence. **Ranking may sort a closed ER downward; it may not drop it.** The honest handling lives in the display: hours carry "call to confirm" because they may be stale in either direction. The LifeCentre in Leesburg is the worked example — its own two sources disagree on the weekend cutoff, so it is listed, with the caveat shown.
 
 ### 6.4 Signal tiers & fusion (integrity core)
 

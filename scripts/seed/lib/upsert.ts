@@ -38,6 +38,8 @@ export interface FacilityCandidate {
   hoursConfidence: 'verified' | 'seeded' | 'unknown';
   capabilities: Capability[];
   species: Species[];
+  /** Google place id when the geocoder returned one — the refreshable handle (§7 item 4). */
+  googlePlaceId?: string | null;
   source: SeedSource;
 }
 
@@ -125,6 +127,7 @@ export async function upsertFacility(
     website: candidate.website,
     is_24_7: candidate.is247,
     hours_confidence: candidate.hoursConfidence,
+    ...(candidate.googlePlaceId ? { google_place_id: candidate.googlePlaceId } : {}),
   };
 
   if (!existing) {

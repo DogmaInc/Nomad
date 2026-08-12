@@ -144,6 +144,7 @@ export async function loadVerifiedRecords(
       const zip = normalizeZip(record.zip);
       let lat = record.lat;
       let lng = record.lng;
+      let googlePlaceId: string | null = null;
 
       if (typeof lat !== 'number' || typeof lng !== 'number') {
         const located = await geocode(address1, city, state, zip ?? undefined);
@@ -153,6 +154,7 @@ export async function loadVerifiedRecords(
         }
         lat = located.lat;
         lng = located.lng;
+        googlePlaceId = located.placeId ?? null;
       }
 
       const capabilities = (record.capabilities ?? []).filter((c): c is Capability =>
@@ -185,6 +187,7 @@ export async function loadVerifiedRecords(
         hoursConfidence: record.hoursText ? 'seeded' : 'unknown',
         capabilities,
         species,
+        googlePlaceId,
         source: {
           source: 'verified',
           // Stable per physical location so re-runs update rather than duplicate.

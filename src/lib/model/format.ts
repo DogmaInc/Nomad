@@ -74,8 +74,13 @@ export function formatBand(loMinutes: number, hiMinutes: number): string {
   // Degenerate after rounding (a heavily clamped facility) — show one figure, not "2–2 hr".
   if (lo === hi) return `${formatDuration(lo)}${plus}`;
 
+  // State the unit once when both ends share it — "15–45 min", not "15 min–45 min".
+  // That is how a person says it, and it stops the band wrapping on a narrow phone.
   if (lo >= MINUTES_PER_HOUR && hi >= MINUTES_PER_HOUR) {
     return `${hoursLabel(lo)}–${hoursLabel(hi)} hr${plus}`;
+  }
+  if (lo < MINUTES_PER_HOUR && hi < MINUTES_PER_HOUR) {
+    return `${lo}–${hi} min`;
   }
   return `${formatDuration(lo)}–${formatDuration(hi)}${plus}`;
 }

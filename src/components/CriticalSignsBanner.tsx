@@ -40,19 +40,22 @@ export function CriticalSignsBanner() {
   return (
     <aside
       // Not dismissible by design — there is no close control, and there should not be.
-      className="border-b border-red-900/60 bg-red-950/40"
+      className="border-b border-red-900/50 bg-red-950/30"
       aria-label="Emergency guidance"
     >
-      <div className="mx-auto max-w-5xl px-4 py-3">
-        <p className="text-sm font-semibold text-red-200">
-          Is your pet critical? Go to the <strong>nearest</strong> open ER now and call while
-          driving — every ER sees life-threatening cases first.
+      {/* Compact by default. It must always be present (§10.4) but it must not eat the
+          screen that holds the answer — at 2 a.m. a third of the viewport spent on a
+          warning is a third not spent on where to drive. */}
+      <div className="mx-auto max-w-5xl px-4 py-2.5">
+        <p className="text-[13px] font-semibold leading-snug text-red-200">
+          Pet critical? Go to the <strong>nearest</strong> open ER now — every ER sees
+          life-threatening cases first.
         </p>
 
         <button
           onClick={() => setExpanded((v) => !v)}
           aria-expanded={expanded}
-          className="mt-1.5 text-sm text-red-300 underline underline-offset-2 hover:text-red-200"
+          className="mt-1 text-[13px] text-red-300/90 underline underline-offset-2 hover:text-red-200"
         >
           {expanded ? 'Hide the warning signs' : 'What counts as critical?'}
         </button>

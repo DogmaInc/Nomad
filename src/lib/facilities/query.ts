@@ -33,6 +33,8 @@ export interface FacilityPin {
   capabilities: string[];
   /** How the floor runs. Changes what "wait" means to the person standing there. */
   careModel: 'open_floor' | 'traditional' | null;
+  /** Regional scarcity factor (§6.2). Also picks the road speed for drive estimates (§8). */
+  densityMult: number;
   /** Null for specialty — appointment-based, no walk-in queue to model (§8). */
   estimate: {
     p50Minutes: number;
@@ -142,6 +144,7 @@ export async function getFacilities(query: FacilityQuery = {}): Promise<Facility
         (c: { capability: string }) => c.capability,
       ),
       careModel: row.care_model ?? null,
+      densityMult: Number(row.density_mult),
       estimate: estimate
         ? {
             p50Minutes: estimate.p50Minutes,

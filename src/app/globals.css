@@ -1,26 +1,107 @@
 @import "tailwindcss";
 
+/**
+ * Nomad design tokens — docs/DESIGN-DIRECTION.md §2.
+ *
+ * Grounded in the subject: the colour of an ER entrance at 2 a.m. Blue-black sky, sodium
+ * light, lit glass. Deliberately not the generic "midnight console" dark mode.
+ *
+ * Single-theme on purpose. §10 says dark is the 2 a.m. default, and the product is only
+ * ever used at the moment it is needed — there is no daytime browsing mode to design for.
+ * So every colour is painted explicitly and nothing is inherited from the host.
+ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ground → the night */
+  --ground: #0a0f16;
+  --surface: #141b25;
+  --surface-sunk: #0f1721;
+  --surface-lift: #1b2430;
+  --line: #26313f;
+  --line-soft: #1b2531;
+
+  /* ink */
+  --ink: #e7edf5;
+  --ink-soft: #a7b4c6;
+  --ink-faint: #7a8799;
+
+  /* the wait ramp — fast to slow. Always paired with a label, never colour alone. */
+  --emerald: #34d399;
+  --teal: #4fd1c5;
+  --amber: #f2a03d;
+  --orange: #fb923c;
+
+  /* reserved: the critical-signs banner and nothing else (§10.6) */
+  --red: #ef4444;
+  --red-dim: #7f1d1d;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-sunk: var(--surface-sunk);
+  --color-surface-lift: var(--surface-lift);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-emerald: var(--emerald);
+  --color-teal: var(--teal);
+  --color-amber: var(--amber);
+  --color-orange: var(--orange);
+  --color-critical: var(--red);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  background: var(--ground);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  /* Notch and home-indicator clearance — see the viewport note in layout.tsx. */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/**
+ * Every measurement is mono with tabular figures, so digits line up in a column and a
+ * changing number does not make the row jitter.
+ */
+.measure {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/** Provenance: small, quiet, and always attached to the number it describes. */
+.provenance {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  color: var(--ink-faint);
+}
+
+/* Keyboard focus stays visible everywhere. */
+:focus-visible {
+  outline: 2px solid var(--teal);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

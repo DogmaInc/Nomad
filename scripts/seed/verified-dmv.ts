@@ -21,6 +21,9 @@ const FILES = [
   'data/dmv/maryland.json',
   'data/dmv/va-east.json',
   'data/dmv/va-west.json',
+  // Rule 2 sweep: hospitals whose business model IS walk-in urgent care, including the
+  // deliberate GP+urgent-care hybrids (Bond Vet, Small Door, Livewell, Heart + Paw).
+  'data/dmv/urgent-care-model.json',
 ];
 const STATES = ['MD', 'DC', 'VA'];
 

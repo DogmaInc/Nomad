@@ -1,0 +1,36 @@
+[
+  {
+    "name": "Eastern Animal Hospital",
+    "address1": "6575 Eastern Avenue",
+    "city": "Baltimore",
+    "state": "MD",
+    "zip": "21224",
+    "phone": "410-633-8808",
+    "website": "https://easternanimalhospital.com/urgent-pet-care-baltimore-md/",
+    "type": "urgent_care",
+    "is247": false,
+    "hoursText": "Urgent care hours: Mon-Fri 8:00 AM - 11:00 PM; Sat 8:00 AM - 4:00 PM; Sun 10:00 AM - 4:00 PM",
+    "evidenceUrl": "https://easternanimalhospital.com/urgent-pet-care-baltimore-md/",
+    "evidenceQuote": "Our hospital offers urgent care services through day-of drop-off appointments. Please note that we do not accept walk-ins for urgent care. Schedule Arrival Time: If available, our staff will schedule a convenient arrival time for the same day. Patients are triaged based on the severity of illness/injury.",
+    "capabilities": [],
+    "confidence": "high",
+    "rejectedReason": "Its own evidence quote defeats it: 'we do not accept walk-ins for urgent care' \u2014 day-of drop-off appointments only. Fails Rule 2. The Maryland pass excluded it for the same reason."
+  },
+  {
+    "name": "Hollymead Veterinary Hospital",
+    "address1": "1540 Airport Road",
+    "city": "Charlottesville",
+    "state": "VA",
+    "zip": "22911",
+    "phone": "434-973-3519",
+    "website": "https://hollymeadvet.com/",
+    "type": "urgent_care",
+    "is247": false,
+    "hoursText": "Open 8:00am - 8:00pm 7 Days a Week, & Holidays",
+    "evidenceUrl": "https://hollymeadvet.com/",
+    "evidenceQuote": "We understand that health concerns don't always come with notice. That's why we're open 7 days a week until 8 pm with same-day availability for urgent care needs.",
+    "capabilities": [],
+    "confidence": "high",
+    "rejectedReason": "Advertises 'same-day availability', not walk-in, and the western-Virginia pass found 'call ahead to ensure we're ready'. Formerly VETSS (an ER), now converted to general practice. Charlottesville keeps coverage via VVSE (24/7) and Autumn Trails."
+  }
+]

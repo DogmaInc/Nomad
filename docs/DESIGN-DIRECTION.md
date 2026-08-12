@@ -84,6 +84,13 @@ claims — which is the whole product argument, expressed typographically.
 
 ## 4. Layout
 
+**Superseded 2026-08-12 — see CLAUDE.md §12.** Rod picked Flighty as the direction, for
+the phone-as-hero showing real content, and set the constraint that 95–100% of use is on a
+phone. That splits the page in two: on mobile the URL opens the product directly (no
+marketing), and the Flighty treatment applies only to the desktop visitor, who is
+discovering or sharing rather than in an emergency. The rest of this section still holds
+for what the mobile view contains.
+
 **The landing page is not a marketing page — it is the answer.**
 
 §10.3 already says it: one primary action, then the ranked list. So the page opens with

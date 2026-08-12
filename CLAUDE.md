@@ -528,6 +528,29 @@ Sentence case, plain verbs, no filler. Statuses always carry timestamps. "Call t
 
 ## 12. Design direction
 
+**Standing constraint (Rod, 2026-08-12): 95–100% of use is on a phone.** Nobody opens
+Nomad at a desk. They are rushing out of the house, or already in the car park, or in a
+passenger seat while someone else drives. Every layout decision is a phone decision first,
+and a desktop layout is a courtesy afterwards — never the design that gets made first and
+squeezed down.
+
+**What Rod likes about Flighty (the reference direction), in his words: "the iPhone and
+phone communicating what the client needs, like having, what the product is."** The phone
+is the hero and it shows *real content* — real flights, real delays, real times — not a
+blurred UI shape used as decoration.
+
+One consequence worth stating, because it changes what gets built: **Flighty's phone-hero
+is marketing; Nomad's is delivery.** People download Flighty *before* a trip, so its
+landing page has to sell an app they will use later. Nobody downloads Nomad before their
+dog gets sick — they arrive mid-emergency, on a phone, needing an answer in seconds. So:
+
+- **On a phone (the 95–100% case): there is no marketing page.** The URL opens the product
+  — critical-signs banner, one action, ranked hospitals. Showing a picture of a phone to
+  someone holding that phone is a wasted screen.
+- **On desktop (the rare case): the Flighty treatment is right.** That visitor is
+  discovering, sharing, or evaluating — a clinic, a vet, a journalist, someone forwarding
+  it to a friend. Show the phone, with real DMV hospitals and real wait bands on it.
+
 Warm, trustworthy, community-serving — a neighbor who happens to know every ER in the country, not a corporate healthtech dashboard and not an alarm console.
 
 - **Ground it in the subject:** late-night emergencies, waiting rooms, community care. Legibility under stress is the aesthetic: generous type scale, huge tap targets, high contrast, calm surfaces, disciplined color.

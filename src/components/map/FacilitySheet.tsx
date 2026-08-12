@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 import type { FacilityPin } from '@/lib/facilities/query';
+import { DirectionsButton } from './DirectionsButton';
+import { ReportWait } from './ReportWait';
 
 /**
  * Bottom-sheet facility card (CLAUDE.md §10.1).
@@ -59,7 +61,6 @@ export function FacilitySheet({
   const isEmergency =
     facility.facilityType === 'er' || facility.facilityType === 'er_specialty';
 
-  const directions = `https://www.google.com/maps/dir/?api=1&destination=${facility.lat},${facility.lng}`;
   const address = [facility.address1, facility.city, facility.state]
     .filter(Boolean)
     .join(', ');
@@ -95,8 +96,11 @@ export function FacilitySheet({
         {facility.estimate ? (
           <>
             <p className="text-2xl font-semibold tabular-nums">{facility.estimate.band}</p>
+            {/* Name what the number measures. "Wait" is ambiguous — see the open-floor note
+                below — and an unqualified figure invites the wrong reading. */}
             <p className="mt-1 text-sm text-slate-400">
-              Typical wait at this hour · modeled estimate · <strong>call to confirm</strong>
+              Typical time until your pet is <strong>treated</strong> — not just greeted ·
+              modeled estimate · <strong>call to confirm</strong>
             </p>
             <p className="mt-2 text-xs text-slate-500">
               No live data from this hospital. Based on typical patterns for this facility
@@ -126,6 +130,23 @@ export function FacilitySheet({
           Not listed as 24/7 right now — emergency hours change often and sites lag. Call
           before you drive.
         </p>
+      ) : null}
+
+      {/* Open-floor hospitals (§ care_model migration).
+          At VEG and similar, a vet triages almost immediately and owners stay with their
+          pet the whole time — so someone who has been there remembers "no wait", while the
+          estimate above says two hours. Both are true, and they measure different things.
+          Saying so is the difference between the number looking wrong and looking honest. */}
+      {facility.careModel === 'open_floor' ? (
+        <div className="mt-3 rounded-lg border border-sky-900/60 bg-sky-950/30 p-3">
+          <p className="text-sm font-medium text-sky-200">Open-floor hospital</p>
+          <p className="mt-1 text-xs leading-relaxed text-sky-100/80">
+            A vet usually looks at your pet within minutes of arriving, and you stay with
+            them the whole time. That first look is triage — it decides how urgent your pet
+            is, not that treatment has started. If your pet is stable, the wait above is
+            still a fair guide to diagnostics, results and treatment.
+          </p>
+        </div>
       ) : null}
 
       {/* Capability chips (§10.1). These are the questions that actually decide where a
@@ -158,15 +179,14 @@ export function FacilitySheet({
             No phone listed
           </span>
         )}
-        <a
-          href={directions}
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-lg border border-slate-600 px-4 py-3 text-center font-semibold text-slate-100 hover:bg-slate-800"
-        >
-          Get directions
-        </a>
+        <DirectionsButton
+          lat={facility.lat}
+          lng={facility.lng}
+          className="rounded-lg border border-slate-600 px-4 py-3 text-center font-semibold text-slate-100 hover:bg-slate-800 disabled:opacity-60"
+        />
       </div>
+
+      <ReportWait facilityId={facility.id} />
     </div>
   );
 }

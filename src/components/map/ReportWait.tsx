@@ -27,6 +27,42 @@ const OPTIONS: Array<{ kind: string; bucket?: string; label: string }> = [
   { kind: 'left_for_faster', label: 'We left to try a faster hospital' },
 ];
 
+/**
+ * Are we at the hospital? Decided ENTIRELY on this device.
+ *
+ * The browser reads its own position, compares it to the facility's published
+ * coordinates, and returns one boolean. The position itself never leaves the device and
+ * is never sent to our server — which is what keeps an anonymous report anonymous while
+ * still letting a report from the waiting room carry more weight than one from a sofa.
+ *
+ * Returns null when permission is refused or the fix times out. Null means "would not
+ * say", which is not the same as "not nearby" and must not be read as either.
+ */
+async function nearFacility(lat: number, lng: number): Promise<boolean | null> {
+  if (typeof navigator === 'undefined' || !navigator.geolocation) return null;
+
+  const position = await new Promise<GeolocationPosition | null>((resolve) => {
+    navigator.geolocation.getCurrentPosition(
+      resolve,
+      () => resolve(null),
+      { enableHighAccuracy: true, timeout: 5000, maximumAge: 120_000 },
+    );
+  });
+  if (!position) return null;
+
+  const R = 6_371_000;
+  const toRad = (d: number) => (d * Math.PI) / 180;
+  const dLat = toRad(lat - position.coords.latitude);
+  const dLng = toRad(lng - position.coords.longitude);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(position.coords.latitude)) * Math.cos(toRad(lat)) * Math.sin(dLng / 2) ** 2;
+  const metres = 2 * R * Math.asin(Math.sqrt(h));
+
+  // 250 m covers the building and its car park without catching the street beyond.
+  return metres <= 250;
+}
+
 /** Stable per browser, meaningless on its own — the server salts and hashes it (§6.5). */
 function clientToken(): string {
   const KEY = 'nomad_client_token';
@@ -38,7 +74,15 @@ function clientToken(): string {
   return token;
 }
 
-export function ReportWait({ facilityId }: { facilityId: string }) {
+export function ReportWait({
+  facilityId,
+  lat,
+  lng,
+}: {
+  facilityId: string;
+  lat: number;
+  lng: number;
+}) {
   const [open, setOpen] = useState(false);
   const [state, setState] = useState<{ kind: 'idle' | 'sending' | 'done' | 'error'; message?: string }>(
     { kind: 'idle' },
@@ -54,6 +98,8 @@ export function ReportWait({ facilityId }: { facilityId: string }) {
           kind: option.kind,
           bucket: option.bucket,
           clientToken: clientToken(),
+          // Computed on this device; only the yes/no is sent.
+          nearFacility: await nearFacility(lat, lng),
         }),
       });
       const body = await response.json();
@@ -88,9 +134,10 @@ export function ReportWait({ facilityId }: { facilityId: string }) {
         <>
           <p className="text-sm font-medium text-slate-200">How long have you waited?</p>
           <p className="mt-1 text-xs leading-relaxed text-slate-500">
-            Anonymous, and it takes one tap. Reports never make a hospital look faster than
-            the estimate — they only correct a figure that looks too good, so nobody can
-            game this in either direction.
+            Anonymous — no account, and nothing that identifies you or where you are is
+            ever sent. Reports never make a hospital look faster than the estimate; they
+            only correct a figure that looks too good, so nobody can game this in either
+            direction.
           </p>
 
           <div className="mt-3 grid gap-1.5">

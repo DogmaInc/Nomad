@@ -186,7 +186,7 @@ export function FacilitySheet({
         />
       </div>
 
-      <ReportWait facilityId={facility.id} />
+      <ReportWait facilityId={facility.id} lat={facility.lat} lng={facility.lng} />
     </div>
   );
 }

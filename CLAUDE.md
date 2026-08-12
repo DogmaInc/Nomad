@@ -362,6 +362,17 @@ interface WaitSignal {
 - **Contradiction rule:** ≥2 `active` reports from distinct `device_hash` within 3 h whose bucket ≥ claim bucket + 2 steps, **or** 1 such report against a claim already carrying `optimistic_flag` → claim becomes `contradicted`: display reverts to the model + "Recent visitors report longer waits than the clinic's update."
 - **Credibility:** each contradicted claim: `credibility − 0.10` (floor 0.25); recovers +0.02 per week without a contradicted claim (cap 1.0). Lower credibility → shorter claim TTLs and easier flags. **The map gets more honest about a facility the more it under-reports.**
 - **Bounded influence (invariant #6):** owner reports only ever move the display *back toward the model*. They never produce an estimate above or below it. Spam against a rival clinic accomplishes nothing worse than the neutral baseline.
+
+**Proximity weighting and the staff-gaming problem (Rod, 2026-08-12).** A report from someone actually in the waiting room should count for more than one from a sofa. The obvious objection is that the person in the building might be the owner or the practice manager, who has every reason to make their own queue look short. Four rules resolve it, and only one of them involves location:
+
+1. **Reports are counted, never averaged.** Contradiction is a tally of reports at least two buckets *worse* than the clinic's claim. A reassuring report is not a vote against them — it is not in the tally at all — so it cannot dilute genuine complaints. This alone defeats the dilution attack.
+2. **Presence only ever adds weight in the lengthening direction.** A near-facility report counts extra when it contradicts a rosy claim, and counts normally when it flatters one. Staff want to look fast; presence buys them nothing toward that.
+3. **Repeat presence marks a device as staff.** This is the signal that actually separates staff from clients, and it is *frequency*, not location: a client visits an ER once, while a device reporting from the same hospital three times in 90 days works there. Revoke the presence bonus on repeat. Computable from the `device_hash` we already store — no geofence required.
+4. **Proximity is decided on the client and sent as one boolean** (`owner_reports.near_facility`). The browser compares its own position to the facility's published coordinates locally; no latitude, longitude or trail ever reaches the server. This keeps §13's "no location tracking" intact while still capturing the signal.
+
+**The flag is client-asserted and therefore forgeable** — anyone can POST `nearFacility: true`. It is a convenience signal, never proof of presence, and must never be treated as verification. That matters most against the very attacker it was raised to stop: a manager can forge it as easily as anyone, which is exactly why rules 1–3 carry the defence and rule 4 does not. Unforgeable presence is Phase 2's `nomad_arrivals` tier, where consent is designed in rather than bolted onto an anonymous endpoint.
+
+**Standing rule: owner reporting is anonymous, always, from the client side.** No account, no identity, no coordinates, no free text — a facility id, a bucket, a salted device hash, and one forgeable boolean. Anything that would weaken this needs an explicit decision from Rod, not an implementation detail.
 - Clinic dashboards show their own contradiction flags privately — transparency nudges honesty.
 
 ### 6.5 Anti-abuse (verification-lite)

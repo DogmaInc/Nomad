@@ -35,7 +35,7 @@ export async function POST(
 ) {
   const { id: facilityId } = await context.params;
 
-  let body: { kind?: string; bucket?: string; clientToken?: string };
+  let body: { kind?: string; bucket?: string; clientToken?: string; nearFacility?: boolean };
   try {
     body = await request.json();
   } catch {
@@ -127,6 +127,9 @@ export async function POST(
     kind,
     reported_wait_bucket: kind === 'left_for_faster' ? null : bucket,
     device_hash: hash,
+    // Client-asserted and forgeable — stored as a weak signal, never as proof of
+    // presence. The client computes it locally; no coordinates reach this server.
+    near_facility: typeof body.nearFacility === 'boolean' ? body.nearFacility : null,
   });
   if (insertError) {
     return NextResponse.json({ error: insertError.message }, { status: 500 });
